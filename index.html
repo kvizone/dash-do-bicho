@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Jogo do Bicho PT RIO</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Material Symbols Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <style>
+    /* Design System - Editorial/Swiss */
+    :root {
+      --cor-fundo-base: #FFF6EF;
+      --cor-escura: #1A1A1A;
+      --cor-clara: #FFF6EF;
+      --cor-destaque: #C6F704;
+      
+      --borda: 1px solid rgba(26, 26, 26, 0.15);
+      --raio-borda: 6px; 
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--cor-fundo-base);
+      color: var(--cor-escura);
+      font-family: 'Roboto', sans-serif;
+      line-height: 1.4;
+      padding: clamp(1rem, 5vw, 3rem);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Boldonse', 'Outfit', sans-serif; 
+      font-weight: 700;
+    }
+
+    /* Topbar minimalista */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: var(--borda);
+    }
+    .topbar h1 { font-size: 1.5rem; letter-spacing: -0.02em; text-transform: uppercase;}
+    
+    .topbar-infos { display: flex; gap: 1.5rem; align-items: center; font-family: 'Roboto Mono', monospace;}
+
+    /* Masonry Grid Setup */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: minmax(140px, auto);
+      gap: 1rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Base Card */
+    .card {
+      border-radius: var(--raio-borda);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      border: var(--borda);
+    }
+    
+    .card:focus-visible { outline: 3px solid var(--cor-escura); outline-offset: 2px; }
+
+    /* Variações de Cor Originais */
+    .bg-claro { background-color: var(--cor-clara); }
+    .bg-escuro { background-color: var(--cor-escura); color: var(--cor-clara); border-color: var(--cor-escura); }
+    .bg-neon { background-color: var(--cor-destaque); color: var(--cor-escura); border-color: var(--cor-destaque); }
+
+    /* Responsividade e Spans */
+    .card { grid-column: span 12; }
+    
+    @media (min-width: 768px) {
+      .card { grid-column: span 6; }
+    }
+
+    @media (min-width: 1024px) {
+      .col-4 { grid-column: span 4; }
+      .col-8 { grid-column: span 8; }
+      .row-1 { grid-row: span 1; }
+      .row-2 { grid-row: span 2; }
+    }
+
+    /* Tipografia de Dados */
+    .dado-bloco { display: flex; align-items: baseline; gap: 1rem; }
+    .dado-traco { font-family: 'Roboto Mono'; font-size: 1.5rem; font-weight: 300; line-height: 1; }
+    .dado-numero { font-family: 'Roboto Mono', monospace; font-size: 4rem; font-weight: 300; line-height: 0.9; letter-spacing: -0.05em; }
+    .dado-legenda { font-size: 0.7rem; text-transform: uppercase; font-weight: 500; opacity: 0.7; max-width: 120px; line-height: 1.2; }
+    
+    /* Destaques padronizados para a paleta */
+    .dado-accent { color: var(--cor-destaque); font-weight: 700; display: block; margin-top: 4px; }
+
+    /* Etiquetas de topo minúsculas */
+    .top-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.6;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    /* Tags Metodologia/Categorias */
+    .tag-metodologia {
+      display: inline-block;
+      border: 1px solid rgba(26, 26, 26, 0.4);
+      padding: 4px 10px;
+      font-size: 0.70rem;
+      text-transform: uppercase;
+      margin: 4px 4px 0 0;
+      border-radius: 4px;
+      font-weight: 500;
+      font-family: 'Roboto Mono', monospace;
+    }
+    
+    .bg-escuro .tag-metodologia { border-color: rgba(255, 255, 255, 0.3); }
+
+    /* Listas Limpas */
+    ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+    li { display: flex; gap: 0.5rem; align-items: center; font-size: 0.85rem; line-height: 1.4; border-bottom: 1px dashed rgba(26,26,26,0.2); padding-bottom: 0.5rem;}
+    li:last-child { border: none; }
+    
+    /* Strong ajustado para a paleta correta */
+    li strong { 
+      font-family: 'Roboto Mono'; 
+      font-size: 0.65rem; 
+      color: var(--cor-escura); 
+      background-color: var(--cor-destaque); 
+      padding: 2px 6px; 
+      border-radius: 2px; 
+      letter-spacing: 0.05em;
+      min-width: 60px;
+      text-align: center;
+    }
+    
+    /* Grid de Resultados */
+    .resultados-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      width: 100%;
+    }
+    .resultado-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .res-posicao { font-family: 'Roboto Mono'; opacity: 0.6; font-size: 0.8rem; margin-bottom: 4px; }
+    .res-numero { font-family: 'Roboto Mono'; font-size: 2.2rem; font-weight: 700; letter-spacing: -0.05em; line-height: 1; }
+    .res-bicho { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; margin-top: 6px; letter-spacing: 0.02em; }
+
+    /* Tabela Completa de Bichos */
+    .tabela-bichos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      width: 100%;
+    }
+    .bicho-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      border: var(--borda);
+      border-radius: var(--raio-borda);
+      background: rgba(255, 255, 255, 0.4);
+      transition: all 0.2s ease;
+    }
+    .bicho-item:hover {
+      background: rgba(26, 26, 26, 0.05);
+      border-color: rgba(26, 26, 26, 0.4);
+    }
+    .bicho-grupo {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--cor-escura);
+      background: var(--cor-destaque);
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .bicho-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .bicho-nome {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+    }
+    .bicho-dezenas {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.7rem;
+      opacity: 0.7;
+      margin-top: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Animação de Atualização em Tempo Real */
+    @keyframes piscarAtualizacao {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .atualizando {
+      animation: piscarAtualizacao 0.6s ease-in-out;
+    }
+    
+    .status-indicador {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #2e7d32;
+      margin-right: 4px;
+      box-shadow: 0 0 8px #2e7d32;
+    }
+    .status-indicador.buscando {
+      background-color: #EA580C;
+      box-shadow: 0 0 8px #EA580C;
+    }
+
+    /* Configuração do Material Symbols solicitada */
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+
+  </style>
+</head>
+<body>
+
+  <main>
+    <header class="topbar">
+      <h1>PT RIO - Jogo do Bicho</h1>
+      <div class="topbar-infos">
+        <span style="font-size: 0.8rem; opacity: 0.7; display: flex; align-items: center;">
+          STATUS: <span id="status-conexao" style="color: #2e7d32; font-weight: bold; margin-left: 6px; display: flex; align-items: center;"><i class="status-indicador"></i> AO VIVO</span>
+        </span>
+        <span id="relogio-mini" style="font-weight: 700;">--:--:--</span>
+      </div>
+    </header>
+
+    <section class="dashboard-grid" aria-label="Métricas e Resultados do Dia">
+      
+      <!-- LINHA 1: Tempo, Próximo Jogo, Destaque -->
+      
+      <article class="card bg-escuro col-4 row-1" tabindex="0">
+        <div class="top-label"><span style="color: var(--cor-destaque);">-</span><span>Horário de Brasília</span></div>
+        <div class="dado-bloco" style="margin-top: 1rem;">
+          <!-- Relógio agora suporta hh:mm:ss no tamanho adequado -->
+          <span class="dado-numero" id="hora-principal" style="font-size: 3rem; letter-spacing: -0.08em;">--:--:--</span>
+          <span class="dado-legenda" id="data-principal" style="margin-left: 0.5rem;">CARREGANDO...</span>
+        </div>
+      </article>
+
+      <article class="card bg-escuro col-4 row-1" tabindex="0">
+        <div class="top-label"><span>-</span><span>Próxima Extração</span></div>
+        <div class="dado-bloco" style="margin-top: 1rem;" id="bloco-prox-extracao">
+          <span class="dado-numero" id="prox-nome" style="color: var(--cor-destaque);">--</span>
+          <span class="dado-legenda">Extração <span id="prox-turno">--</span><span class="dado-accent" id="prox-hora" style="font-size: 1.2rem;">--:--</span></span>
+        </div>
+      </article>
+
+      <article class="card bg-escuro col-4 row-1" tabindex="0">
+        <div class="top-label"><span>-</span><span>Mais Sorteado (Semana)</span></div>
+        <div class="dado-bloco" style="margin-top: 1rem; align-items: center; gap: 0.5rem;" id="bloco-mais-sorteado">
+          <!-- Ícone Material Symbols configurado -->
+          <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--cor-destaque);">local_fire_department</span>
+          <span class="dado-numero" id="hot-qtd" style="font-size: 3.5rem;">--</span>
+          <span class="dado-legenda" style="margin-left: 0.5rem;">Aparições na cabeça <span class="dado-accent" id="hot-nome">--</span></span>
+        </div>
+      </article>
+
+      <!-- LINHA 2: Resultados do Dia (Destaque Principal) e Bichos Atrasados -->
+
+      <article class="card bg-neon col-8 row-2" tabindex="0">
+        <div class="top-label" style="color: var(--cor-escura); opacity: 0.8;">
+          <span>-</span><span>Últimos Resultados</span>
+          <span id="label-ultimo-resultado" style="font-weight: 700; color: var(--cor-clara); background: var(--cor-escura); padding: 2px 8px; border-radius: 10px;">Aguardando...</span>
+        </div>
+        
+        <h2 style="font-size: 2rem; line-height: 1; margin-top: 1.5rem; letter-spacing: -0.03em;">Deu no Poste</h2>
+        
+        <div class="resultados-grid" id="grid-resultados">
+          <!-- Injetado via JS -->
+        </div>
+
+        <div style="margin-top: 2rem; border-top: 1px solid rgba(26,26,26,0.15); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <span id="soma-valores" style="font-family: 'Roboto Mono'; font-size: 0.8rem; font-weight: 500;">SOMA: --</span>
+            <span id="soma-bicho" style="font-family: 'Roboto Mono'; font-size: 0.8rem; font-weight: 500;">SOMA BICHO: --</span>
+        </div>
+
+        <!-- Marca d'água decorativa -->
+        <svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="var(--cor-escura)" stroke-width="0.5" style="position: absolute; bottom: -20px; right: -20px; opacity: 0.05; pointer-events: none;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 2v20M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+      </article>
+
+      <article class="card bg-claro col-4 row-2" tabindex="0">
+        <div class="top-label"><span>-</span><span>Radar de Atraso</span></div>
+        <h3 style="margin-top: 1rem; font-size: 1.2rem;">Top 5 Atrasados</h3>
+        <p style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.8;">Análise baseada no 1º prêmio (Cabeça) da PT RIO.</p>
+        
+        <ul id="lista-atrasados">
+          <!-- Injetado via JS -->
+        </ul>
+        
+        <div style="margin-top: auto; padding-top: 1rem;">
+          <span class="tag-metodologia" id="quente-atrasados" style="background: var(--cor-destaque); border: none; color: var(--cor-escura);">+ Quente: --</span>
+        </div>
+      </article>
+
+      <!-- LINHA 3: Horários Oficiais -->
+      <article class="card bg-claro col-12 row-1" style="flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;" tabindex="0">
+        <div>
+            <div class="top-label" style="width: auto;"><span>-</span><span style="margin-left: 8px;">Grade de Horários - PT RIO</span></div>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">Sorteios diários de Segunda a Sábado.</p>
+        </div>
+        
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <span class="tag-metodologia">PTM<br><strong style="background:none; padding:0; font-size:1rem;">11:20</strong></span>
+          <span class="tag-metodologia">PT<br><strong style="background:none; padding:0; font-size:1rem;">14:20</strong></span>
+          <span class="tag-metodologia">PTV<br><strong style="background:none; padding:0; font-size:1rem;">16:20</strong></span>
+          <span class="tag-metodologia bg-escura" style="background: var(--cor-escura); color: var(--cor-clara);">PTN<br><strong style="background:none; color:var(--cor-destaque); padding:0; font-size:1rem;">18:20</strong></span>
+          <span class="tag-metodologia">CORUJA<br><strong style="background:none; padding:0; font-size:1rem;">21:20</strong></span>
+        </div>
+      </article>
+
+      <!-- LINHA 4: Bicho do Dia (Nova Adição) -->
+      <article class="card bg-escuro col-12 row-1" style="border: 2px solid var(--cor-destaque);" tabindex="0">
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between; align-items: center; position: relative; z-index: 2;">
+          
+          <div style="flex: 1; min-width: 280px;">
+            <div class="top-label"><span style="color: var(--cor-destaque);">-</span><span>Indicação do Sistema</span></div>
+            <h2 style="font-size: 2.2rem; margin-top: 0.5rem; letter-spacing: -0.02em;">Bicho do Dia</h2>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8; line-height: 1.5; max-width: 500px;">Projeção de alta probabilidade para hoje baseada em análise combinatória de atrasos, ciclos numéricos e frequência nas últimas 100 extrações.</p>
+          </div>
+
+          <div class="dado-bloco" style="align-items: center; gap: 1.5rem;" id="bloco-bicho-dia">
+            <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--cor-destaque);">monitoring</span>
+            <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+              <span class="dado-numero" id="bicho-dia-numero" style="font-size: 5rem; color: var(--cor-destaque);">--</span>
+            </div>
+            <div style="display: flex; flex-direction: column;">
+              <span id="bicho-dia-nome" style="font-size: 1.4rem; font-weight: 700; text-transform: uppercase;">Aguardando...</span>
+              <span class="dado-legenda" style="margin-top: 6px; max-width: 100%;">Dezenas Fortes: <br><span class="dado-accent" id="bicho-dia-dezenas" style="font-size: 1.1rem;">-- • -- • -- • --</span></span>
+            </div>
+          </div>
+
+        </div>
+        
+        <!-- Marca d'água de gráfico decorativa -->
+        <svg width="180" height="180" viewBox="0 0 24 24" fill="none" stroke="var(--cor-destaque)" stroke-width="0.5" style="position: absolute; top: -30px; right: 35%; opacity: 0.05; pointer-events: none;">
+          <path d="M3 3v18h18"></path>
+          <path d="M18 9l-5 5-3-3-5 5"></path>
+        </svg>
+      </article>
+
+      <!-- LINHA 5: Tabela de Bichos (Nova Adição) -->
+      <article class="card bg-claro col-12" tabindex="0">
+        <div class="top-label"><span style="color: var(--cor-escura);">-</span><span>Tabela Oficial</span></div>
+        <h2 style="font-size: 1.8rem; margin-top: 1.5rem; margin-bottom: 1.5rem; letter-spacing: -0.02em;">Todos os Bichos e Dezenas</h2>
+
+        <div class="tabela-bichos-grid">
+          <div class="bicho-item"><span class="bicho-grupo">01</span><div class="bicho-info"><span class="bicho-nome">🦤 Avestruz</span><span class="bicho-dezenas">01 02 03 04</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">02</span><div class="bicho-info"><span class="bicho-nome">🦅 Águia</span><span class="bicho-dezenas">05 06 07 08</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">03</span><div class="bicho-info"><span class="bicho-nome">🐴 Burro</span><span class="bicho-dezenas">09 10 11 12</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">04</span><div class="bicho-info"><span class="bicho-nome">🦋 Borboleta</span><span class="bicho-dezenas">13 14 15 16</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">05</span><div class="bicho-info"><span class="bicho-nome">🐕 Cachorro</span><span class="bicho-dezenas">17 18 19 20</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">06</span><div class="bicho-info"><span class="bicho-nome">🐐 Cabra</span><span class="bicho-dezenas">21 22 23 24</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">07</span><div class="bicho-info"><span class="bicho-nome">🐏 Carneiro</span><span class="bicho-dezenas">25 26 27 28</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">08</span><div class="bicho-info"><span class="bicho-nome">🐪 Camelo</span><span class="bicho-dezenas">29 30 31 32</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">09</span><div class="bicho-info"><span class="bicho-nome">🐍 Cobra</span><span class="bicho-dezenas">33 34 35 36</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">10</span><div class="bicho-info"><span class="bicho-nome">🐇 Coelho</span><span class="bicho-dezenas">37 38 39 40</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">11</span><div class="bicho-info"><span class="bicho-nome">🐎 Cavalo</span><span class="bicho-dezenas">41 42 43 44</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">12</span><div class="bicho-info"><span class="bicho-nome">🐘 Elefante</span><span class="bicho-dezenas">45 46 47 48</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">13</span><div class="bicho-info"><span class="bicho-nome">🐓 Galo</span><span class="bicho-dezenas">49 50 51 52</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">14</span><div class="bicho-info"><span class="bicho-nome">🐈 Gato</span><span class="bicho-dezenas">53 54 55 56</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">15</span><div class="bicho-info"><span class="bicho-nome">🐊 Jacaré</span><span class="bicho-dezenas">57 58 59 60</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">16</span><div class="bicho-info"><span class="bicho-nome">🦁 Leão</span><span class="bicho-dezenas">61 62 63 64</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">17</span><div class="bicho-info"><span class="bicho-nome">🐒 Macaco</span><span class="bicho-dezenas">65 66 67 68</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">18</span><div class="bicho-info"><span class="bicho-nome">🐖 Porco</span><span class="bicho-dezenas">69 70 71 72</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">19</span><div class="bicho-info"><span class="bicho-nome">🦚 Pavão</span><span class="bicho-dezenas">73 74 75 76</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">20</span><div class="bicho-info"><span class="bicho-nome">🦃 Peru</span><span class="bicho-dezenas">77 78 79 80</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">21</span><div class="bicho-info"><span class="bicho-nome">🐂 Touro</span><span class="bicho-dezenas">81 82 83 84</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">22</span><div class="bicho-info"><span class="bicho-nome">🐅 Tigre</span><span class="bicho-dezenas">85 86 87 88</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">23</span><div class="bicho-info"><span class="bicho-nome">🐻 Urso</span><span class="bicho-dezenas">89 90 91 92</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">24</span><div class="bicho-info"><span class="bicho-nome">🦌 Veado</span><span class="bicho-dezenas">93 94 95 96</span></div></div>
+          <div class="bicho-item"><span class="bicho-grupo">25</span><div class="bicho-info"><span class="bicho-nome">🐄 Vaca</span><span class="bicho-dezenas">97 98 99 00</span></div></div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <script>
+    // ==========================================
+    // 1. CONFIGURAÇÕES E DADOS GERAIS DO JOGO
+    // ==========================================
+    const bichosBase = [
+      { num: '01', nome: 'Avestruz', emoji: '🦤', dez: '01 02 03 04' },
+      { num: '02', nome: 'Águia', emoji: '🦅', dez: '05 06 07 08' },
+      { num: '03', nome: 'Burro', emoji: '🐴', dez: '09 10 11 12' },
+      { num: '04', nome: 'Borboleta', emoji: '🦋', dez: '13 14 15 16' },
+      { num: '05', nome: 'Cachorro', emoji: '🐕', dez: '17 18 19 20' },
+      { num: '06', nome: 'Cabra', emoji: '🐐', dez: '21 22 23 24' },
+      { num: '07', nome: 'Carneiro', emoji: '🐏', dez: '25 26 27 28' },
+      { num: '08', nome: 'Camelo', emoji: '🐪', dez: '29 30 31 32' },
+      { num: '09', nome: 'Cobra', emoji: '🐍', dez: '33 34 35 36' },
+      { num: '10', nome: 'Coelho', emoji: '🐇', dez: '37 38 39 40' },
+      { num: '11', nome: 'Cavalo', emoji: '🐎', dez: '41 42 43 44' },
+      { num: '12', nome: 'Elefante', emoji: '🐘', dez: '45 46 47 48' },
+      { num: '13', nome: 'Galo', emoji: '🐓', dez: '49 50 51 52' },
+      { num: '14', nome: 'Gato', emoji: '🐈', dez: '53 54 55 56' },
+      { num: '15', nome: 'Jacaré', emoji: '🐊', dez: '57 58 59 60' },
+      { num: '16', nome: 'Leão', emoji: '🦁', dez: '61 62 63 64' },
+      { num: '17', nome: 'Macaco', emoji: '🐒', dez: '65 66 67 68' },
+      { num: '18', nome: 'Porco', emoji: '🐖', dez: '69 70 71 72' },
+      { num: '19', nome: 'Pavão', emoji: '🦚', dez: '73 74 75 76' },
+      { num: '20', nome: 'Peru', emoji: '🦃', dez: '77 78 79 80' },
+      { num: '21', nome: 'Touro', emoji: '🐂', dez: '81 82 83 84' },
+      { num: '22', nome: 'Tigre', emoji: '🐅', dez: '85 86 87 88' },
+      { num: '23', nome: 'Urso', emoji: '🐻', dez: '89 90 91 92' },
+      { num: '24', nome: 'Veado', emoji: '🦌', dez: '93 94 95 96' },
+      { num: '25', nome: 'Vaca', emoji: '🐄', dez: '97 98 99 00' }
+    ];
+
+    const horariosExtracao = [
+      { nome: 'PTM', hora: '11:20', turno: 'Manhã' },
+      { nome: 'PT', hora: '14:20', turno: 'Tarde' },
+      { nome: 'PTV', hora: '16:20', turno: 'Tarde' },
+      { nome: 'PTN', hora: '18:20', turno: 'Noite' },
+      { nome: 'CORUJA', hora: '21:20', turno: 'Noturna' }
+    ];
+
+    // ==========================================
+    // 2. LÓGICA DO RELÓGIO PRINCIPAL
+    // ==========================================
+    function atualizarRelogio() {
+      const agora = new Date();
+      
+      const opcoesHora = { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const opcoesData = { timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'short', year: 'numeric' };
+
+      const hora = agora.toLocaleTimeString('pt-BR', opcoesHora);
+      const data = agora.toLocaleDateString('pt-BR', opcoesData).toUpperCase();
+
+      document.getElementById('hora-principal').textContent = hora;
+      document.getElementById('data-principal').innerHTML = data + '<br><span class="dado-accent">Horário de Brasília</span>';
+      document.getElementById('relogio-mini').textContent = hora;
+    }
+    setInterval(atualizarRelogio, 1000);
+    atualizarRelogio();
+
+    // ==========================================
+    // 3. ENGINE DE DADOS (SIMULAÇÃO DE API)
+    // ==========================================
+    
+    // Converte qualquer milhar na identificação do bicho correto
+    function getBichoPorDezena(numeroStr) {
+      const dezena = parseInt(numeroStr.slice(-2));
+      let grupo = Math.ceil(dezena / 4);
+      if (grupo === 0) grupo = 25; // A dezena 00 pertence ao grupo 25 (Vaca)
+      return bichosBase[grupo - 1];
+    }
+
+    // Calcula de forma inteligente qual é o próximo sorteio do dia
+    function getProximoSorteio() {
+       const agora = new Date();
+       // Usa UTC ajustado para Brasília na marra pra evitar bug de locale
+       const hBR = parseInt(agora.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit' }));
+       const mBR = parseInt(agora.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', minute: '2-digit' }));
+       const horaMinuto = (hBR * 60) + mBR;
+
+       for (let sorteio of horariosExtracao) {
+         const [h, m] = sorteio.hora.split(':');
+         if (horaMinuto < (parseInt(h) * 60 + parseInt(m))) return sorteio;
+       }
+       return horariosExtracao[0]; // Volta pro PTM do dia seguinte
+    }
+
+    // Identifica qual sorteio já foi concluído por último
+    function getSorteioAnterior() {
+       const agora = new Date();
+       const hBR = parseInt(agora.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit' }));
+       const mBR = parseInt(agora.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', minute: '2-digit' }));
+       const horaMinuto = (hBR * 60) + mBR;
+       
+       let ultimo = horariosExtracao[horariosExtracao.length - 1]; 
+
+       for (let i = horariosExtracao.length - 1; i >= 0; i--) {
+         const [h, m] = horariosExtracao[i].hora.split(':');
+         if (horaMinuto >= (parseInt(h) * 60 + parseInt(m))) return horariosExtracao[i];
+       }
+       return ultimo;
+    }
+
+    // Mock: Gera os 5 prêmios e calcula somas
+    function gerarResultadosMock(sorteioStr) {
+      const resultados = [];
+      let soma = 0;
+      for (let i = 1; i <= 5; i++) {
+        // Gera milhar aleatória de 0000 a 9999
+        let numero = Math.floor(Math.random() * 10000).toString().padStart(4, '0'); 
+        soma += parseInt(numero);
+        resultados.push({ posicao: i, numero: numero, bicho: getBichoPorDezena(numero) });
+      }
+      return { resultados, soma, sorteioAtual: sorteioStr };
+    }
+
+    // ==========================================
+    // 4. ATUALIZAÇÃO DO DOM (REATIVIDADE)
+    // ==========================================
+    function animarElemento(id) {
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.remove('atualizando');
+      void el.offsetWidth; // Reflow forçado para reiniciar CSS animation
+      el.classList.add('atualizando');
+    }
+
+    // Função Principal de Refresh dos Dados
+    async function fetchAtualizarDashboard() {
+      // 1. Loading State (Feedback Visual)
+      const statusLabel = document.getElementById('status-conexao');
+      statusLabel.innerHTML = '<i class="status-indicador buscando"></i> BUSCANDO...';
+      statusLabel.style.color = '#EA580C';
+
+      // Simulando latência de rede/API
+      await new Promise(resolve => setTimeout(resolve, 600));
+
+      // 2. Extração dos Dados do Momento
+      const prox = getProximoSorteio();
+      const anterior = getSorteioAnterior();
+      
+      // Aqui num sistema real entraria: const dados = await fetch('/api/ptrio/resultados').then(r => r.json());
+      const payloadAoVivo = gerarResultadosMock(`${anterior.nome} ${anterior.hora}`);
+      
+      // Randomização leve para simular mudança de estatísticas nos cards laterais
+      const bichoHot = bichosBase[Math.floor(Math.random() * 25)];
+      const bichoDia = bichosBase[Math.floor(Math.random() * 25)];
+      const atrasados = [...bichosBase].sort(() => 0.5 - Math.random()).slice(0, 5);
+
+      // --- INJEÇÃO NO HTML ---
+
+      // Header de Próximo Sorteio
+      document.getElementById('prox-nome').textContent = prox.nome;
+      document.getElementById('prox-turno').textContent = prox.turno;
+      document.getElementById('prox-hora').textContent = prox.hora;
+      animarElemento('bloco-prox-extracao');
+
+      // Card: Mais Sorteado
+      document.getElementById('hot-qtd').textContent = (Math.floor(Math.random() * 4) + 8) + 'x';
+      document.getElementById('hot-nome').textContent = `${bichoHot.emoji} ${bichoHot.nome} (${bichoHot.num})`;
+      animarElemento('bloco-mais-sorteado');
+
+      // Card Principal: Resultados
+      document.getElementById('label-ultimo-resultado').innerHTML = `● ${payloadAoVivo.sorteioAtual}`;
+      let htmlRes = '';
+      payloadAoVivo.resultados.forEach(res => {
+        htmlRes += `
+          <div class="resultado-item">
+            <span class="res-posicao">${res.posicao}º PRÊMIO</span>
+            <span class="res-numero">${res.numero}</span>
+            <span class="res-bicho">${res.bicho.emoji} ${res.bicho.nome} (${res.bicho.num})</span>
+          </div>`;
+      });
+      document.getElementById('grid-resultados').innerHTML = htmlRes;
+      document.getElementById('soma-valores').textContent = `SOMA: ${payloadAoVivo.soma}`;
+      const bSoma = getBichoPorDezena(payloadAoVivo.soma.toString());
+      document.getElementById('soma-bicho').textContent = `SOMA BICHO: ${bSoma.emoji} ${bSoma.nome} (${bSoma.num})`;
+      animarElemento('grid-resultados');
+
+      // Card: Atrasados
+      let htmlAtrasados = '';
+      atrasados.forEach((a, index) => {
+        const dias = Math.floor(Math.random() * 15) + ((5 - index) * 5); // Gera decrescente falso
+        htmlAtrasados += `<li><strong style="color: var(--cor-escura); background: var(--cor-destaque);">${dias} DIAS</strong> ${a.emoji} ${a.nome} (Grupo ${a.num})</li>`;
+      });
+      document.getElementById('lista-atrasados').innerHTML = htmlAtrasados;
+      const bQuente = bichosBase[Math.floor(Math.random() * 25)];
+      document.getElementById('quente-atrasados').textContent = `+ Quente: ${bQuente.emoji} ${bQuente.nome}`;
+      animarElemento('lista-atrasados');
+
+      // Card: Bicho do Dia
+      document.getElementById('bicho-dia-numero').textContent = bichoDia.num;
+      document.getElementById('bicho-dia-nome').textContent = `${bichoDia.emoji} ${bichoDia.nome}`;
+      document.getElementById('bicho-dia-dezenas').textContent = bichoDia.dez.replace(/ /g, ' • ');
+      animarElemento('bloco-bicho-dia');
+
+      // Restaura Visual do Status para Conectado
+      statusLabel.innerHTML = '<i class="status-indicador"></i> AO VIVO';
+      statusLabel.style.color = '#2e7d32';
+    }
+
+    // Inicialização imediata ao carregar a página
+    fetchAtualizarDashboard();
+
+    // ==========================================
+    // 5. POLLING (Ciclo de atualização)
+    // ==========================================
+    // Executa a busca de dados a cada 15 segundos para fins de demonstração
+    setInterval(fetchAtualizarDashboard, 15000);
+
+  </script>
+
+</body>
+</html>
